@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 788283571
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: animationtexture
+      Dependencies: {}
