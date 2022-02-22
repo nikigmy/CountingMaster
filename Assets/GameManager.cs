@@ -1,5 +1,4 @@
 using System;
-using AnimationInstancing;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -26,8 +25,6 @@ public partial class GameManager : Singleton<GameManager>
     void Awake()
     {
         _analyticsManager = new AnalyticsManager();
-        StartCoroutine(AnimationManager.GetInstance().LoadAnimationAssetBundle(Application.streamingAssetsPath + "/animationtexture"));
-        DontDestroyOnLoad(gameObject);
         _gameSave = new GameSave();
         SetState(GameState.MENU);
     }

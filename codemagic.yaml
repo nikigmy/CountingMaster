@@ -10,11 +10,12 @@ workflows:
         TEST_REPORT_PATH: tests.xml
     scripts:
       - name: Activate License
-        script: $UNITY_BIN -batchmode -quit -logFile -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
+        script: $UNITY_BIN -batchmode -quit -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.BuildDesktop -nographics
     artifacts:
-      - "desktop/CountMasterTesting.exe"
+      - "desktop/TooManyHeroes.exe"
+      - "desktop/TooManyHeroes_Data"
       - ${TEST_REPORT_PATH}
     publishing:
       scripts:

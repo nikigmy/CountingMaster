@@ -1,5 +1,3 @@
-using GameAnalyticsSDK;
-
 public partial class GameManager
 {
     protected class FinishState : GameStateBase
@@ -11,7 +9,6 @@ public partial class GameManager
             base.Init(context);
             context._gameSave.level++;
             context._gameSave.Save();
-            context._analyticsManager.ReportLevelProgression(GAProgressionStatus.Complete, context._levelController.currentLevelIndex, PlayerController.Instance.Score);
             StatesUtil.Pause();
         }
 

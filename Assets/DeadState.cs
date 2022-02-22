@@ -1,4 +1,3 @@
-using GameAnalyticsSDK;
 
 public partial class GameManager
 {
@@ -9,8 +8,6 @@ public partial class GameManager
         public override void Init(GameManager context)
         {
             base.Init(context);
-            
-            context._analyticsManager.ReportLevelProgression(GAProgressionStatus.Fail, context._levelController.currentLevelIndex);
         }
 
         public override void Play(GameManager context)
