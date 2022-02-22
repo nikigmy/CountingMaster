@@ -12,9 +12,9 @@ workflows:
       - name: Activate License
         script: $UNITY_BIN -batchmode -quit -logFile -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
       - name: Build
-        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScript.BuildDesktop -nographics
+        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.BuildDesktop -nographics
     artifacts:
-      - "mac/UnitTestingPong.app"
+      - "desktop/CountMasterTesting.exe"
       - ${TEST_REPORT_PATH}
     publishing:
       scripts:
@@ -37,9 +37,9 @@ workflows:
           script: $UNITY_BIN -batchmode -executeMethod Runner.RunUnitTests -logFile -nographics -projectPath . -testsOutput ${TEST_REPORT_PATH}
           test_report: ${TEST_REPORT_PATH}
         - name: Build
-          script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScript.BuildMac -nographics
+          script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.BuildMac -nographics
       artifacts:
-        - "mac/UnitTestingPong.app"
+        - "mac/CountMasterTesting.app"
         - ${TEST_REPORT_PATH}
       publishing:
         scripts:
