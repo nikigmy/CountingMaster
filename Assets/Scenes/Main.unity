@@ -123,6 +123,25 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &243942226 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 619675250, guid: d5206fd58687f9e4aa1edbd16ae3526d,
+    type: 3}
+  m_PrefabInstance: {fileID: 3181099512743645113}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &243942230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 243942226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c943912b97e9b6d49a624a5c6d42e9b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  filenamer: '"C:\Users\nikig\Desktop\ScreenShot.png"'
 --- !u!1 &288067192 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3181099513931032956, guid: d5206fd58687f9e4aa1edbd16ae3526d,
@@ -397,6 +416,16 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1329997510}
+    - target: {fileID: 31605092533441515, guid: 3f6df0775ee1a0b41a64c85d17e1472f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 31605092954153168, guid: 3f6df0775ee1a0b41a64c85d17e1472f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 31605092954153170, guid: 3f6df0775ee1a0b41a64c85d17e1472f,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -517,6 +546,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1329997510}
+    - target: {fileID: 31605093199964503, guid: 3f6df0775ee1a0b41a64c85d17e1472f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 31605094236537919, guid: 3f6df0775ee1a0b41a64c85d17e1472f,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
