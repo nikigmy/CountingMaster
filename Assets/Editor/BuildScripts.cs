@@ -23,7 +23,7 @@ public class BuildScripts : MonoBehaviour
     public static void Build_Desktop()
     {
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-        buildPlayerOptions.locationPathName = "desktop/" + Application.productName;
+        buildPlayerOptions.locationPathName = "desktopBuild/" + Application.productName;
         buildPlayerOptions.target = BuildTarget.StandaloneWindows;
         buildPlayerOptions.options = BuildOptions.None;
         buildPlayerOptions.scenes = GetScenes();
@@ -40,14 +40,14 @@ public class BuildScripts : MonoBehaviour
         EditorUserBuildSettings.buildAppBundle = false;
         
         SetupAndroidBuild();
-        
+
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-        buildPlayerOptions.locationPathName = "android/" + Application.productName;
+        buildPlayerOptions.locationPathName = "androidBuild/" + Application.productName;
         buildPlayerOptions.target = BuildTarget.Android;
         buildPlayerOptions.options = BuildOptions.None;
         buildPlayerOptions.scenes = GetScenes();
         
-
+        
         Debug.Log("Building Android");
         Build(buildPlayerOptions);
         Debug.Log("Built Android");
@@ -63,7 +63,7 @@ public class BuildScripts : MonoBehaviour
 
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         
-        buildPlayerOptions.locationPathName = "android/android.aab";
+        buildPlayerOptions.locationPathName = "androidBuild/android.aab";
         buildPlayerOptions.target = BuildTarget.Android;
         buildPlayerOptions.options = BuildOptions.None;
         buildPlayerOptions.scenes = GetScenes();
@@ -146,7 +146,7 @@ public class BuildScripts : MonoBehaviour
     private static void Build_iOS(BuildOptions buildOptions)
     {
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-        buildPlayerOptions.locationPathName = "ios/"  + Application.productName;
+        buildPlayerOptions.locationPathName = "iosBuild/"  + Application.productName;
         buildPlayerOptions.target = BuildTarget.iOS;
         buildPlayerOptions.scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(scene => scene.path).ToArray();
         buildPlayerOptions.options = buildOptions;

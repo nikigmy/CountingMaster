@@ -12,7 +12,7 @@ workflows:
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Desktop -nographics
     artifacts:
-      - "desktop"
+      - "desktopBuild"
     publishing:
       scripts:
         - name: Deactivate License
@@ -38,8 +38,8 @@ workflows:
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Android_Bundle -nographics
     artifacts:
-      - android/*.aab
-      - "android"
+      - androidBuild/*.aab
+      - "androidBuild"
     publishing:
       scripts:
         - name: Deactivate Unity License
@@ -64,10 +64,10 @@ workflows:
         script: |
           echo $FCI_KEYSTORE | base64 --decode > /tmp/keystore.keystore   
       - name: Build
-        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Android_Bundle -nographics
+        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Android -nographics
     artifacts:
-      - android/*.apk
-      - "android"
+      - androidBuild/*.apk
+      - "androidBuild"
     publishing:
       scripts:
         - name: Deactivate Unity License
@@ -86,7 +86,7 @@ workflows:
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Mac -nographics
     artifacts:
-      - "mac/CountMasterTesting.app"
+      - "macBuild/CountMasterTesting.app"
     publishing:
       scripts:
         - name: Deactivate License
@@ -105,7 +105,7 @@ workflows:
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_iOS_Development -nographics
     artifacts:
-      - "mac/CountMasterTesting.app"
+      - "macBuild/CountMasterTesting.app"
     publishing:
       scripts:
         - name: Deactivate License
