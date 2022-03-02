@@ -91,15 +91,13 @@ public class BuildScripts : MonoBehaviour
             Debug.Log("Bundle version not provided");
 
         byte[] data = Convert.FromBase64String(Environment.GetEnvironmentVariable("FCI_KEYSTORE"));
-        string decodedString = Encoding.UTF8.GetString(data);
         
         var directoryPath = Path.Combine(Directory.GetParent(Application.dataPath).FullName,  "tmp");
         if (!Directory.Exists(directoryPath))
         {
             Directory.CreateDirectory(directoryPath);
         }
-        
-        File.WriteAllText(Path.Combine(directoryPath, "keystore.keystore"), decodedString);
+        File.WriteAllBytes(Path.Combine(directoryPath, "keystore.keystore"), data);
         
         PlayerSettings.Android.keystoreName = "tmp/keystore.keystore";
 
