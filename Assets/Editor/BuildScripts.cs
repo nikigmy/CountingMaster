@@ -36,12 +36,17 @@ public class BuildScripts : MonoBehaviour
     [MenuItem("Build/Build Android")]
     private static void Build_Android()
     {
+        PlayerSettings.Android.useCustomKeystore = true;
+        EditorUserBuildSettings.buildAppBundle = false;
+        
+        SetupAndroidBuild();
+        
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.locationPathName = "android/" + Application.productName;
         buildPlayerOptions.target = BuildTarget.Android;
         buildPlayerOptions.options = BuildOptions.None;
         buildPlayerOptions.scenes = GetScenes();
-        EditorUserBuildSettings.buildAppBundle = false;
+        
 
         Debug.Log("Building Android");
         Build(buildPlayerOptions);
@@ -51,16 +56,79 @@ public class BuildScripts : MonoBehaviour
     [MenuItem("Build/Build Android Bundle")]
     private static void Build_Android_Bundle()
     {
+        PlayerSettings.Android.useCustomKeystore = true;
+        EditorUserBuildSettings.buildAppBundle = true;
+        
+        SetupAndroidBuild();
+
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-        buildPlayerOptions.locationPathName = "android/" + Application.productName;
+        
+        buildPlayerOptions.locationPathName = "android/android.aab";
         buildPlayerOptions.target = BuildTarget.Android;
         buildPlayerOptions.options = BuildOptions.None;
         buildPlayerOptions.scenes = GetScenes();
-        EditorUserBuildSettings.buildAppBundle = true;
+        EditorUserBuildSettings.buildAppBundle = false;
 
         Debug.Log("Building Android Bundle");
         Build(buildPlayerOptions);
         Debug.Log("Built Android Bundle");
+    }
+
+    private static void SetupAndroidBuild()
+    {
+        // Set bundle version. NEW_BUILD_NUMBER environment variable is set in the codemagic.yaml 
+        bool versionIsSet = int.TryParse(Environment.GetEnvironmentVariable("NEW_BUILD_NUMBER"), out int version);
+
+        if (versionIsSet)
+        {
+            Debug.Log($"Bundle version code set to {version}");
+            PlayerSettings.Android.bundleVersionCode = version;
+        }
+        else
+            Debug.Log("Bundle version not provided");
+
+        string keystoreName = Environment.GetEnvironmentVariable("FCI_KEYSTORE_PATH");
+
+        if (!string.IsNullOrEmpty(keystoreName))
+        {
+            Debug.Log($"Setting path to keystore: {keystoreName}");
+            PlayerSettings.Android.keystoreName = keystoreName;
+        }
+        else
+            Debug.Log("Keystore name not provided");
+
+        // Set keystore password
+        string keystorePass = Environment.GetEnvironmentVariable("FCI_KEYSTORE_PASSWORD");
+
+        if (!string.IsNullOrEmpty(keystorePass))
+        {
+            Debug.Log("Setting keystore password");
+            PlayerSettings.Android.keystorePass = keystorePass;
+        }
+        else
+            Debug.Log("Keystore password not provided");
+
+        // Set keystore alias name
+        string keyaliasName = Environment.GetEnvironmentVariable("FCI_KEY_ALIAS");
+
+        if (!string.IsNullOrEmpty(keyaliasName))
+        {
+            Debug.Log("Setting keystore alias");
+            PlayerSettings.Android.keyaliasName = keyaliasName;
+        }
+        else
+            Debug.Log("Keystore alias not provided");
+
+        // Set keystore alias password
+        string keyaliasPass = Environment.GetEnvironmentVariable("FCI_KEY_PASSWORD");
+
+        if (!string.IsNullOrEmpty(keyaliasPass))
+        {
+            Debug.Log("Setting keystore alias password");
+            PlayerSettings.Android.keyaliasPass = keyaliasPass;
+        }
+        else
+            Debug.Log("Keystore alias password not provided");
     }
 
     [MenuItem("Build/Build iOS (development)")]
