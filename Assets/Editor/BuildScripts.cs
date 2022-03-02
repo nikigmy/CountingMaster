@@ -6,7 +6,7 @@ using UnityEngine;
 public class BuildScripts : MonoBehaviour
 {
     [MenuItem("Build/Build Mac")]
-    public static void BuildMac()
+    public static void Build_Mac()
     {
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.locationPathName = "mac/" + Application.productName + ".app";
@@ -20,7 +20,7 @@ public class BuildScripts : MonoBehaviour
     }
     
     [MenuItem("Build/Build Desktop")]
-    public static void BuildDesktop()
+    public static void Build_Desktop()
     {
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.locationPathName = "desktop/" + Application.productName;
@@ -33,8 +33,15 @@ public class BuildScripts : MonoBehaviour
         Debug.Log("Built Desktop");
     }
 
-    [MenuItem("Build/Build iOS (release)")]
-    private static void Build_iOS_Release()
+    [MenuItem("Build/Build Android")]
+    private static void Build_Android()
+    {
+        IncrementBuildNumber(BuildTarget.iOS);
+        Build_iOS(BuildOptions.None);
+    }
+
+    [MenuItem("Build/Build Android Bundle")]
+    private static void Build_Android_Build()
     {
         IncrementBuildNumber(BuildTarget.iOS);
         Build_iOS(BuildOptions.None);

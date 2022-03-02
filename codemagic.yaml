@@ -1,47 +1,97 @@
 workflows:
-  unity-desktop-workflow:
+  desktop:
     name: Unity Desktop Workflow
     environment:
       groups:
-        # Add the group environment variables in Codemagic UI (either in Application/Team variables) - https://docs.codemagic.io/variables/environment-variable-groups/
         - unity # <-- (Includes UNITY_SERIAL, UNITY_USERNAME, UNITY_PASSWORD)
       vars:
-        UNITY_BIN: /Applications/Unity/Hub/Editor/2020.3.28f1/Unity.app/Contents/MacOS/Unity
-        TEST_REPORT_PATH: tests.xml
+        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
     scripts:
       - name: Activate License
         script: $UNITY_BIN -batchmode -quit -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
       - name: Build
-        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.BuildDesktop -nographics
+        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Desktop -nographics
     artifacts:
       - "desktop"
-      - ${TEST_REPORT_PATH}
     publishing:
       scripts:
         - name: Deactivate License
           script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
-  unity-mac-workflow:
-      # Building Unity on macOS requires special instance type which is available upon request
-      name: Unity Mac Workflow
-      environment:
-        groups:
-          # Add the group environment variables in Codemagic UI (either in Application/Team variables) - https://docs.codemagic.io/variables/environment-variable-groups/
-          - unity # <-- (Includes UNITY_SERIAL, UNITY_USERNAME, UNITY_PASSWORD)
-        vars:
-          UNITY_BIN: /Applications/Unity/Hub/Editor/2020.3.28f1/Unity.app/Contents/MacOS/Unity
-          TEST_REPORT_PATH: tests.xml
+  
+  android-apk:
+    name: Unity Android APK Workflow
+    environment:
+      groups:
+        - unity # <-- (Includes UNITY_SERIAL, UNITY_USERNAME, UNITY_PASSWORD)
+      vars:
+        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
+    scripts:
+      - name: Activate License
+        script: $UNITY_BIN -batchmode -quit -logFile -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
+      - name: Build
+        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Android -nographics
+    artifacts:
+      - app/build/outputs/**/**/*.apk
+      - "android"
+    publishing:
       scripts:
-        - name: Activate License
-          script: $UNITY_BIN -batchmode -quit -logFile -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
-        - name: Run Unit Tests
-          script: $UNITY_BIN -batchmode -executeMethod Runner.RunUnitTests -logFile -nographics -projectPath . -testsOutput ${TEST_REPORT_PATH}
-          test_report: ${TEST_REPORT_PATH}
-        - name: Build
-          script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.BuildMac -nographics
-      artifacts:
-        - "mac/CountMasterTesting.app"
-        - ${TEST_REPORT_PATH}
-      publishing:
-        scripts:
-          - name: Deactivate License
-            script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
+        - name: Deactivate License
+          script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
+  
+  android-ipa:
+    name: Unity Android IPA Workflow
+    environment:
+      groups:
+        - unity 
+      vars:
+        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
+    scripts:
+      - name: Activate License
+        script: $UNITY_BIN -batchmode -quit -logFile -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
+      - name: Build
+        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Android_Build -nographics
+    artifacts:
+      - build/**/outputs/bundle/**/*.aab
+      - "android"
+    publishing:
+      scripts:
+        - name: Deactivate License
+          script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
+          
+  mac:
+    name: Unity Mac Workflow
+    environment:
+      groups:
+        - unity
+      vars:
+        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
+    scripts:
+      - name: Activate License
+        script: $UNITY_BIN -batchmode -quit -logFile -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
+      - name: Build
+        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Mac -nographics
+    artifacts:
+      - "mac/CountMasterTesting.app"
+    publishing:
+      scripts:
+        - name: Deactivate License
+          script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
+          
+  ios:
+    name: Unity IOS Workflow
+    environment:
+      groups:
+        - unity
+      vars:
+        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
+    scripts:
+      - name: Activate License
+        script: $UNITY_BIN -batchmode -quit -logFile -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
+      - name: Build
+        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_iOS_Development -nographics
+    artifacts:
+      - "mac/CountMasterTesting.app"
+    publishing:
+      scripts:
+        - name: Deactivate License
+          script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
