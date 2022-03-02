@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -76,6 +78,7 @@ public class BuildScripts : MonoBehaviour
 
     private static void SetupAndroidBuild()
     {
+        
         // Set bundle version. NEW_BUILD_NUMBER environment variable is set in the codemagic.yaml 
         bool versionIsSet = int.TryParse(Environment.GetEnvironmentVariable("NEW_BUILD_NUMBER"), out int version);
 
@@ -87,7 +90,13 @@ public class BuildScripts : MonoBehaviour
         else
             Debug.Log("Bundle version not provided");
 
+        byte[] data = Convert.FromBase64String(Environment.GetEnvironmentVariable("FCI_KEYSTORE"));
+        string decodedString = Encoding.UTF8.GetString(data);
         string keystoreName = Environment.GetEnvironmentVariable("FCI_KEYSTORE_PATH");
+        
+        File.WriteAllText(Application.dataPath + keystoreName, decodedString);
+        
+        
 
         if (!string.IsNullOrEmpty(keystoreName))
         {
