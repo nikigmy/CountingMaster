@@ -92,19 +92,16 @@ public class BuildScripts : MonoBehaviour
 
         byte[] data = Convert.FromBase64String(Environment.GetEnvironmentVariable("FCI_KEYSTORE"));
         string decodedString = Encoding.UTF8.GetString(data);
-        string keystoreName = Environment.GetEnvironmentVariable("FCI_KEYSTORE_PATH");
-        
-        File.WriteAllText(Application.dataPath + keystoreName, decodedString);
-        
-        
 
-        if (!string.IsNullOrEmpty(keystoreName))
+        var directoryPath = Path.Combine(Application.dataPath,  "tmp");
+        if (!Directory.Exists(directoryPath))
         {
-            Debug.Log($"Setting path to keystore: {keystoreName}");
-            PlayerSettings.Android.keystoreName = keystoreName;
+            Directory.CreateDirectory(directoryPath);
         }
-        else
-            Debug.Log("Keystore name not provided");
+        
+        File.WriteAllText(Path.Combine(directoryPath, "keystore.keystore"), decodedString);
+        
+        PlayerSettings.Android.keystoreName = "tmp/keystore.keystore";
 
         // Set keystore password
         string keystorePass = Environment.GetEnvironmentVariable("FCI_KEYSTORE_PASSWORD");
