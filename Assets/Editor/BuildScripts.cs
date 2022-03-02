@@ -92,8 +92,8 @@ public class BuildScripts : MonoBehaviour
 
         byte[] data = Convert.FromBase64String(Environment.GetEnvironmentVariable("FCI_KEYSTORE"));
         string decodedString = Encoding.UTF8.GetString(data);
-
-        var directoryPath = Path.Combine(Application.dataPath,  "tmp");
+        
+        var directoryPath = Path.Combine(Directory.GetParent(Application.dataPath).FullName,  "tmp");
         if (!Directory.Exists(directoryPath))
         {
             Directory.CreateDirectory(directoryPath);
