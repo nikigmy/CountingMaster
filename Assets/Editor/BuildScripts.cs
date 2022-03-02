@@ -36,15 +36,31 @@ public class BuildScripts : MonoBehaviour
     [MenuItem("Build/Build Android")]
     private static void Build_Android()
     {
-        IncrementBuildNumber(BuildTarget.iOS);
-        Build_iOS(BuildOptions.None);
+        BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
+        buildPlayerOptions.locationPathName = "android/" + Application.productName;
+        buildPlayerOptions.target = BuildTarget.Android;
+        buildPlayerOptions.options = BuildOptions.None;
+        buildPlayerOptions.scenes = GetScenes();
+        EditorUserBuildSettings.buildAppBundle = false;
+
+        Debug.Log("Building Android");
+        Build(buildPlayerOptions);
+        Debug.Log("Built Android");
     }
 
     [MenuItem("Build/Build Android Bundle")]
-    private static void Build_Android_Build()
+    private static void Build_Android_Bundle()
     {
-        IncrementBuildNumber(BuildTarget.iOS);
-        Build_iOS(BuildOptions.None);
+        BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
+        buildPlayerOptions.locationPathName = "android/" + Application.productName;
+        buildPlayerOptions.target = BuildTarget.Android;
+        buildPlayerOptions.options = BuildOptions.None;
+        buildPlayerOptions.scenes = GetScenes();
+        EditorUserBuildSettings.buildAppBundle = true;
+
+        Debug.Log("Building Android Bundle");
+        Build(buildPlayerOptions);
+        Debug.Log("Built Android Bundle");
     }
 
     [MenuItem("Build/Build iOS (development)")]

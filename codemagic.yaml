@@ -49,7 +49,7 @@ workflows:
       - name: Activate License
         script: $UNITY_BIN -batchmode -quit -logFile -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
       - name: Build
-        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Android_Build -nographics
+        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Android_Bundle -nographics
     artifacts:
       - build/**/outputs/bundle/**/*.aab
       - "android"
