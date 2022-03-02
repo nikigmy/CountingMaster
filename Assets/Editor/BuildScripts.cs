@@ -9,7 +9,7 @@ public class BuildScripts : MonoBehaviour
     public static void Build_Mac()
     {
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-        buildPlayerOptions.locationPathName = "mac/" + Application.productName + ".app";
+        buildPlayerOptions.locationPathName = "macBuild/" + Application.productName + ".app";
         buildPlayerOptions.target = BuildTarget.StandaloneOSX;
         buildPlayerOptions.options = BuildOptions.None;
         buildPlayerOptions.scenes = GetScenes();
@@ -23,7 +23,7 @@ public class BuildScripts : MonoBehaviour
     public static void Build_Desktop()
     {
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-        buildPlayerOptions.locationPathName = "desktopBuild/" + Application.productName;
+        buildPlayerOptions.locationPathName = "desktopBuild/" + Application.productName+ ".exe";
         buildPlayerOptions.target = BuildTarget.StandaloneWindows;
         buildPlayerOptions.options = BuildOptions.None;
         buildPlayerOptions.scenes = GetScenes();
@@ -42,7 +42,7 @@ public class BuildScripts : MonoBehaviour
         SetupAndroidBuild();
 
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-        buildPlayerOptions.locationPathName = "androidBuild/" + Application.productName;
+        buildPlayerOptions.locationPathName = "androidBuild/" + Application.productName + ".apk";
         buildPlayerOptions.target = BuildTarget.Android;
         buildPlayerOptions.options = BuildOptions.None;
         buildPlayerOptions.scenes = GetScenes();
@@ -63,7 +63,7 @@ public class BuildScripts : MonoBehaviour
 
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         
-        buildPlayerOptions.locationPathName = "androidBuild/android.aab";
+        buildPlayerOptions.locationPathName = "androidBuild/" + Application.productName + ".aab";
         buildPlayerOptions.target = BuildTarget.Android;
         buildPlayerOptions.options = BuildOptions.None;
         buildPlayerOptions.scenes = GetScenes();
