@@ -4,6 +4,7 @@ workflows:
     environment:
       groups:
         - unity # <-- (Includes UNITY_SERIAL, UNITY_USERNAME, UNITY_PASSWORD)
+        - ssh
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
     scripts:
@@ -25,6 +26,7 @@ workflows:
         - unity
         - keystore_credentials
         - google_play
+        - ssh
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
         PACKAGE_NAME: <PACKAGE_NAME>
@@ -50,6 +52,7 @@ workflows:
       groups:
         - unity
         - keystore_credentials
+        - ssh
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
         PACKAGE_NAME: <PACKAGE_NAME>
@@ -71,6 +74,7 @@ workflows:
     environment:
       groups:
         - unity
+        - ssh
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
     scripts:
@@ -90,6 +94,7 @@ workflows:
     environment:
       groups:
         - unity
+        - ssh
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
     scripts:
