@@ -9,9 +9,11 @@ workflows:
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
     scripts:
-      - name: Activate License
+      - &activate_license
+        name: Activate License
         script: $UNITY_BIN -batchmode -quit -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
-      - name: Gather Dependencies
+      - &gather_dependencies
+        name: Gather Dependencies
         script: sh BuildScripts/GatherDependencies.sh
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Desktop -nographics
@@ -19,28 +21,29 @@ workflows:
       - "desktopBuild"
     publishing:
       scripts:
-        - name: Deactivate License
+        - &deactivate_license
+          name: Deactivate License
           script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
   
   desktop:
     name: Unity Desktop Workflow
     environment:
       groups:
-        - unity # <-- (Includes UNITY_SERIAL, UNITY_USERNAME, UNITY_PASSWORD)
+        - unity
         - ssh
+        - git
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
     scripts:
-      - name: Activate License
-        script: $UNITY_BIN -batchmode -quit -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
+      - *activate_license
+      - *gather_dependencies
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Desktop -nographics
     artifacts:
       - "desktopBuild"
     publishing:
       scripts:
-        - name: Deactivate License
-          script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
+        - &deactivate_license
   
   android-ipa:
     name: Unity Android IPA Workflow
@@ -50,12 +53,13 @@ workflows:
         - keystore_credentials
         - google_play
         - ssh
+        - git
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
         PACKAGE_NAME: <PACKAGE_NAME>
     scripts:
-      - name: Activate License
-        script: $UNITY_BIN -batchmode -quit -logFile -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?} 
+      - *activate_license
+      - *gather_dependencies 
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Android_Bundle -nographics
     artifacts:
@@ -63,8 +67,7 @@ workflows:
       - "androidBuild"
     publishing:
       scripts:
-        - name: Deactivate Unity License
-          script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
+        - &deactivate_license
       google_play:
         credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
         track: alpha
@@ -76,12 +79,13 @@ workflows:
         - unity
         - keystore_credentials
         - ssh
+        - git
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
         PACKAGE_NAME: <PACKAGE_NAME>
     scripts:
-      - name: Activate License
-        script: $UNITY_BIN -batchmode -quit -logFile -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}   
+      - *activate_license
+      - *gather_dependencies  
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Android -nographics
     artifacts:
@@ -89,8 +93,7 @@ workflows:
       - "androidBuild"
     publishing:
       scripts:
-        - name: Deactivate Unity License
-          script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
+        - &deactivate_license
   
   mac:
     name: Unity Mac Workflow
@@ -98,19 +101,19 @@ workflows:
       groups:
         - unity
         - ssh
+        - git
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
     scripts:
-      - name: Activate License
-        script: $UNITY_BIN -batchmode -quit -logFile -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
+      - *activate_license
+      - *gather_dependencies 
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Mac -nographics
     artifacts:
       - "macBuild/CountMasterTesting.app"
     publishing:
       scripts:
-        - name: Deactivate License
-          script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
+        - &deactivate_license
           
   ios:
     name: Unity IOS Workflow
@@ -118,16 +121,16 @@ workflows:
       groups:
         - unity
         - ssh
+        - git
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
     scripts:
-      - name: Activate License
-        script: $UNITY_BIN -batchmode -quit -logFile -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
+      - *activate_license
+      - *gather_dependencies 
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_iOS_Development -nographics
     artifacts:
       - "macBuild/CountMasterTesting.app"
     publishing:
       scripts:
-        - name: Deactivate License
-          script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
+        - &deactivate_license

@@ -1,5 +1,5 @@
 # go into right dir
-cd ../Assets/Dependencies
+cd Assets/Dependencies
 # download dependencies
 curl -sJLH 'Authorization:token '"$GIHUB_TOKEN"'' "https://api.github.com/repos/nikigmy/LibratyTest/releases/latest" \
 | grep 'releases/assets' \
