@@ -11,7 +11,7 @@ workflows:
       - name: Activate License
         script: $UNITY_BIN -batchmode -quit -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
       - name: PreBuild
-        script: curl -sJLH "Authorization:token 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" "https://api.github.com/repos/nikigmy/LibratyTest/releases/latest" | grep 'releases/assets' | cut -d '"' -f 4 | xargs -n 1 curl -JL -O -H "Authorization:token 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" -H "Accept:application/octet-stream"
+        script: curl -sJLH "Authorization:token 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" "https://api.github.com/repos/nikigmy/LibratyTest/releases/latest" | grep 'releases/assets' | cut -d '"' -f 4 | xargs -n 1 curl -JL -O -H "Authorization:token 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" -H "Accept:application/octet-stream"
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Desktop -nographics
     artifacts:
