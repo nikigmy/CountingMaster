@@ -5,6 +5,7 @@ workflows:
       groups:
         - unity # <-- (Includes UNITY_SERIAL, UNITY_USERNAME, UNITY_PASSWORD)
         - ssh
+        - git
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
     scripts:
