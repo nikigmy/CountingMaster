@@ -43,7 +43,7 @@ workflows:
       - "desktopBuild"
     publishing:
       scripts:
-        - &deactivate_license
+        - *deactivate_license
   
   android-ipa:
     name: Unity Android IPA Workflow
@@ -67,7 +67,7 @@ workflows:
       - "androidBuild"
     publishing:
       scripts:
-        - &deactivate_license
+        - *deactivate_license
       google_play:
         credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
         track: alpha
@@ -93,7 +93,7 @@ workflows:
       - "androidBuild"
     publishing:
       scripts:
-        - &deactivate_license
+        - *deactivate_license
   
   mac:
     name: Unity Mac Workflow
@@ -113,7 +113,7 @@ workflows:
       - "macBuild/CountMasterTesting.app"
     publishing:
       scripts:
-        - &deactivate_license
+        - *deactivate_license
           
   ios:
     name: Unity IOS Workflow
@@ -133,4 +133,4 @@ workflows:
       - "macBuild/CountMasterTesting.app"
     publishing:
       scripts:
-        - &deactivate_license
+        - *deactivate_license
