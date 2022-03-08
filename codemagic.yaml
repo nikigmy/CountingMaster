@@ -8,15 +8,21 @@ workflows:
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
     scripts:
-      - *activate_license
-      - *gather_dependencies
+      - &activate_license
+        name: Activate License
+        script: $UNITY_BIN -batchmode -quit -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
+      - &gather_dependencies
+        name: Gather Dependencies
+        script: sh BuildScripts/PrepareCodeMagicBuild.sh
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Desktop -nographics
     artifacts:
       - "desktopBuild"
     publishing:
       scripts:
-        - *deactivate_license
+        - &deactivate_license
+        name: Deactivate License
+        script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
   
   android-ipa:
     name: Unity Android IPA Workflow
@@ -103,22 +109,3 @@ workflows:
     publishing:
       scripts:
         - *deactivate_license
-  
-  common:
-    name: Common Scripts Workflow
-    environment:
-      groups:
-        - unity
-        - git
-      vars:
-        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
-    scripts:
-      - &activate_license
-        name: Activate License
-        script: $UNITY_BIN -batchmode -quit -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
-      - &gather_dependencies
-        name: Gather Dependencies
-        script: sh BuildScripts/PrepareCodeMagicBuild.sh
-      - &deactivate_license
-        name: Deactivate License
-        script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
