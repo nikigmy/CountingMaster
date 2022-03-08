@@ -21,8 +21,8 @@ workflows:
     publishing:
       scripts:
         - &deactivate_license
-        name: Deactivate License
-        script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
+          name: Deactivate License
+          script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
   
   android-ipa:
     name: Unity Android IPA Workflow
