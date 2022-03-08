@@ -1,36 +1,19 @@
 workflows:
-  TestIntegration:
-    name: Unity TestIntegration Workflow
-    environment:
-      groups:
-        - unity # <-- (Includes UNITY_SERIAL, UNITY_USERNAME, UNITY_PASSWORD)
-        - ssh
-        - git
-      vars:
-        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
     scripts:
       - &activate_license
         name: Activate License
         script: $UNITY_BIN -batchmode -quit -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
       - &gather_dependencies
         name: Gather Dependencies
-        script: sh BuildScripts/GatherDependencies.sh
-      - name: Build
-        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Desktop -nographics
-    artifacts:
-      - "desktopBuild"
-    publishing:
-      scripts:
-        - &deactivate_license
-          name: Deactivate License
-          script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
-  
+        script: sh BuildScripts/PrepareCodeMagicBuild.sh
+      - &deactivate_license
+        name: Deactivate License
+        script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
   desktop:
     name: Unity Desktop Workflow
     environment:
       groups:
         - unity
-        - ssh
         - git
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
@@ -52,7 +35,6 @@ workflows:
         - unity
         - keystore_credentials
         - google_play
-        - ssh
         - git
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
@@ -78,7 +60,6 @@ workflows:
       groups:
         - unity
         - keystore_credentials
-        - ssh
         - git
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
@@ -100,7 +81,6 @@ workflows:
     environment:
       groups:
         - unity
-        - ssh
         - git
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
@@ -120,7 +100,6 @@ workflows:
     environment:
       groups:
         - unity
-        - ssh
         - git
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
