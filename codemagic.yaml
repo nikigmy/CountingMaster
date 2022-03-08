@@ -1,5 +1,14 @@
 workflows:
+  common:
+    name: Common Scripts Workflow
+    environment:
+      groups:
+        - unity
+        - git
+      vars:
+        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
     scripts:
+      scripts:
       - &activate_license
         name: Activate License
         script: $UNITY_BIN -batchmode -quit -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
