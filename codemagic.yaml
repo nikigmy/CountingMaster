@@ -1,6 +1,6 @@
 workflows:
-  Test Integration:
-    name: Unity Desktop Workflow
+  TestIntegration:
+    name: Unity TestIntegration Workflow
     environment:
       groups:
         - unity # <-- (Includes UNITY_SERIAL, UNITY_USERNAME, UNITY_PASSWORD)
