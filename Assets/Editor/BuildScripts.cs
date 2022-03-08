@@ -1,11 +1,10 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-public class BuildScripts : MonoBehaviour
+public class BuildScripts 
 {
     [MenuItem("Build/Build Mac")]
     public static void Build_Mac()
@@ -202,4 +201,6 @@ public class BuildScripts : MonoBehaviour
     {
         return (from scene in EditorBuildSettings.scenes where scene.enabled select scene.path).ToArray();
     }
+    
+    
 }

@@ -26,8 +26,6 @@ public partial class GameManager : Singleton<GameManager>
     {
         TMPro.FastAction a;
         LibraryTest.TestClass.TestMethod();
-        
-        LibraryTest.TestClass3.Test3Method1();
         _analyticsManager = new AnalyticsManager();
         _gameSave = new GameSave();
         SetState(GameState.MENU);

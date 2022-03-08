@@ -1,117 +1,169 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class GithubPackageManager 
+[CreateAssetMenu(fileName = "GithubPackageManager", menuName = "GithubPackageManager/CreateScriptableObject", order = 1)]
+public class GithubPackageManager : ScriptableObject
 {
+    private static GithubPackageManager instance;
     
-    // [MenuItem("Build/DependencyTest")]
-    // private static void DependencyTest()
-    // {
-    //     HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create("https://api.github.com/repos/nikigmy/LibratyTest/releases/latest");
-    //     request.Method = "GET";
-    //     
-    //     // Content type is JSON.
-    //     request.Headers = new WebHeaderCollection() { "Authorization: token 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"};
-    //     
-    //     try
-    //     {
-    //         using(HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-    //         {
-    //             Debug.Log("Publish Response: " + (int)response.StatusCode + ", " + response.StatusDescription);
-    //             if((int)response.StatusCode == 200)
-    //             {
-    //             }
-    //         }
-    //     }
-    //     catch(Exception e)
-    //     {
-    //         Debug.LogError(e.ToString());
-    //     }
-    //     
-    // }
-    
-    
-    //
-    // [MenuItem("Build/DependencyTest")]
-    // private static void DependencyTest()
-    // {
-    //     try
-    //     {
-    //         UnityWebRequest webRequest =
-    //             UnityWebRequest.Get("https://api.github.com/repos/nikigmy/LibratyTest/releases/latest");
-    //         while (!webRequest.isDone)
-    //         {
-    //             Debug.LogError(webRequest.result);
-    //         }
-    //         Debug.LogError(webRequest.result);
-    //         string[] pages = "https://api.github.com/repos/nikigmy/LibratyTest/releases/latest".Split('/');
-    //         int page = pages.Length - 1;
-    //
-    //         switch (webRequest.result)
-    //         {
-    //             case UnityWebRequest.Result.ConnectionError:
-    //             case UnityWebRequest.Result.DataProcessingError:
-    //                 Debug.LogError(pages[page] + ": Error: " + webRequest.error);
-    //                 break;
-    //             case UnityWebRequest.Result.ProtocolError:
-    //                 Debug.LogError(pages[page] + ": HTTP Error: " + webRequest.error);
-    //                 break;
-    //             case UnityWebRequest.Result.Success:
-    //                 Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
-    //                 break;
-    //         }
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         Debug.LogError(e.ToString());
-    //     }
-    // }
-    
-    // Lets poke Maps for the distance between two cities.
-    static string url = "https://api.github.com/repos/nikigmy/LibratyTest/releases/latest";
-    static UnityWebRequest www;
- 
-    static void Request()
+    public static GithubPackageManager Instance
     {
-        www = UnityWebRequest.Get(url);
-        www.Send();
+        get
+        {
+            if (instance == null)
+            {
+                var assetGuid = AssetDatabase.FindAssets("t:GithubPackageManager").FirstOrDefault();
+                if (string.IsNullOrEmpty(assetGuid))
+                {
+                    Debug.LogError("Cant find GithubPackageManager asset, please create one");
+                }
+                else
+                {
+                    var path = AssetDatabase.GUIDToAssetPath(assetGuid);
+                    instance = AssetDatabase.LoadAssetAtPath<GithubPackageManager>(path);
+                    if (instance == null)
+                    {
+                        Debug.LogError("Could not load GithubPackageManager asset");
+                    }
+                }
+            }
+            return instance;
+        }
     }
- 
-    static void EditorUpdate()
+
+    [SerializeField] private List<RepositoryDependency> dependencies;    
+    
+    static string latestReleaseUrlFormat = "https://api.github.com/repos/{0}/{1}/releases/latest";
+    static string targetReleaseUrlFormat = "https://api.github.com/repos/{0}/{1}/releases/{2}";
+    static UnityWebRequest currentRequest;
+    private bool isUpdating;
+
+    void SendRequest(string url, Dictionary<string ,string> headers)
     {
-        if (!www.isDone)
-            return;
+        currentRequest = UnityWebRequest.Get(url);
+        foreach (var header in headers)
+        {
+            currentRequest.SetRequestHeader(header.Key, header.Value);
+        }
+        currentRequest.Send();
+    }
+
+    [MenuItem ("Tools/GithubPackageManager/UpdateDependencies")]
+    static void UpdateDependencies()
+    {
         
-        if (www.isNetworkError)
-            Debug.Log(www.error);
+        foreach (var repositoryDependency in Instance.dependencies)
+        {
+            Instance.HandleDependency(repositoryDependency);
+        }
+    }
+
+    private void HandleDependency(RepositoryDependency repositoryDependency)
+    {
+        Log($"Begin Loading {repositoryDependency.RepositoryName} dependency");
+        string accessToken = "";
+        string releaseTag;
+        if (!string.IsNullOrEmpty(repositoryDependency.AccessTokenEnvironmentVariable))
+        {
+            accessToken = Environment.GetEnvironmentVariable(repositoryDependency.AccessTokenEnvironmentVariable);
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                if (!Application.isBatchMode)
+                {
+                    var window = InputAccessTokenDialog.Init(repositoryDependency.RepositoryName,
+                        repositoryDependency.AccessTokenEnvironmentVariable);
+                    window.ShowModalUtility();
+                    accessToken = window.currentText;
+                }
+                else
+                {
+                    Debug.LogWarning($"No access token found for dependency '{repositoryDependency.RepositoryName}' skipping");
+                }
+            }
+        }
+        
+        //for private repos
+        var headers = new Dictionary<string, string>();
+        if (!string.IsNullOrEmpty(accessToken))
+        {
+            headers.Add("Authorization", "token " + accessToken);
+        }
+
+        //get release data
+        string releaseData;
+        if (repositoryDependency.ReleaseTag == "latest")
+        {
+            SendRequest(string.Format(latestReleaseUrlFormat, repositoryDependency.OwnerName, repositoryDependency.RepositoryName), headers);
+            WaitUntilReady();
+            releaseData = currentRequest.downloadHandler.text;
+        }
         else
-            Debug.Log(www.downloadHandler.text);
-        
-        EditorApplication.update -= EditorUpdate;
+        {
+            SendRequest(string.Format(targetReleaseUrlFormat, repositoryDependency.OwnerName, repositoryDependency.RepositoryName, repositoryDependency.ReleaseTag), headers);
+            WaitUntilReady();
+            releaseData = currentRequest.downloadHandler.text;
+        }
+
+        if (!string.IsNullOrEmpty(releaseData))
+        {
+            
+            var releaseNamePattern = "(\"tag_name\":\\s+\".+\")[.\\w\\W]+?(\"name\":\\s+\".+\")(?=[.\\w\\W]+?\\],)";
+            var assetsPattern = "(\"url\":\\s+\"http.+releases\\/assets.+\")[.\\w\\W]+?(\"name\":\\s+\".+\")(?=[.\\w\\W]+?\\],)";
+            var releaseNameMatch = Regex.Match(releaseData,releaseNamePattern);
+            var assetMatches = Regex.Matches(releaseData,assetsPattern);
+            
+            Log($"Found {assetMatches.Count} assets for Release '{releaseNameMatch.Groups[1].Value.Split('"')[1]}' with tag '{releaseNameMatch.Groups[0].Value.Split('"')[1]}'");
+            headers.Add("Accept", "application/octet-stream");
+            foreach (Match match in assetMatches)
+            {
+                var requestPath = match.Groups[0].Value.Split('"')[3];
+                var fileName = match.Groups[1].Value.Split('"')[3];
+                
+                Log($"Loading asset {fileName}");
+                
+                SendRequest(requestPath, headers);
+                WaitUntilReady();
+                var directoryPath =  Path.Combine(Path.Combine(Directory.GetParent(Application.dataPath).FullName ,  "Assets"), repositoryDependency.TargetDirectory);
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+                File.WriteAllBytes(Path.Combine(directoryPath, fileName), currentRequest.downloadHandler.data);
+                
+                Log($"Loaded asset {fileName}");
+            }
+        }
+        else
+        {
+            Debug.LogError($"Could not load dependency '{repositoryDependency.RepositoryName}'");
+        }
     }
- 
-    [MenuItem ("Tools/Poke Google Web Service")]
-    static void UpdateFromSpreadsheet()
+
+    private void Log(string log)
     {
-        Request();
-        EditorApplication.update += EditorUpdate;
+        Debug.Log(log);
     }
-    // private bool isDone;
-    // private IEnumerator SetJsonData()
-    // {
-    //     // Dictionary<string, string> headers = new Dictionary<string, string>();
-    //     // headers.Add("Authorization", "token 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");
-    //     //
-    //     // WWW www = new WWW("https://api.github.com/repos/nikigmy/LibratyTest/releases/latest", null, headers);
-    //     // www
-    //     // while (www.isDone)
-    //     // {
-    //     //     
-    //     // }
-    //     // yield return www;
-    //     //
-    //     // Debug.Log(www.text);
-    //     yield return null;
-    // } 
+
+    private void WaitUntilReady()
+    {
+        while (!currentRequest.isDone)
+        {
+        }
+    }
+
+    [Serializable]
+    public class RepositoryDependency
+    {
+        public string RepositoryName;
+        public string OwnerName;
+        public string ReleaseTag;
+        public string AccessTokenEnvironmentVariable;
+        public string TargetDirectory;
+    }
 }
