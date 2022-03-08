@@ -12,7 +12,7 @@ workflows:
       - name: Activate License
         script: $UNITY_BIN -batchmode -quit -serial ${UNITY_SERIAL?} -username ${UNITY_USERNAME?} -password ${UNITY_PASSWORD?}
       - name: Gather Dependencies
-        script: sudo BuildScripts/GatherDependencies.sh
+        script: sh BuildScripts/GatherDependencies.sh
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Desktop -nographics
     artifacts:
