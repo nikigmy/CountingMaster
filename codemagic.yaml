@@ -18,6 +18,7 @@ workflows:
       - &deactivate_license
         name: Deactivate License
         script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
+        
   desktop:
     name: Unity Desktop Workflow
     environment:
