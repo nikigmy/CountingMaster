@@ -43,7 +43,7 @@ workflows:
         name: Set build number and export Unity
         script: |
           export NEW_BUILD_NUMBER=$(($(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks=alpha) + 1))
-          $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScript.Build_Android_Bundle -nographics
+          $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Android_Bundle -nographics
     artifacts:
       - androidBuild/*.aab
       - "androidBuild"
