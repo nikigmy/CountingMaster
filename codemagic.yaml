@@ -50,6 +50,30 @@ workflows:
     publishing:
       scripts:
         - *deactivate_license
+        
+        
+  android-ipa-internal-test:
+    name: Android IPA Internal Testing Test Workflow
+    environment:
+      groups:
+        - unity
+        - keystore_credentials
+        - google_play
+        - git
+      vars:
+        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
+        PACKAGE_NAME: com.NikigmiStudios.CountMaster
+    scripts:
+      - *activate_license
+    artifacts:
+      - androidBuild/*.aab
+      - "androidBuild"
+    publishing:
+      scripts:
+        - *deactivate_license
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
   
   android-ipa-internal:
     name: Android IPA Internal Testing Workflow
