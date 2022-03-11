@@ -68,7 +68,6 @@ public class BuildScripts
         buildPlayerOptions.target = BuildTarget.Android;
         buildPlayerOptions.options = BuildOptions.None;
         buildPlayerOptions.scenes = GetScenes();
-        EditorUserBuildSettings.buildAppBundle = false;
 
         Debug.Log("Building Android Bundle");
         Build(buildPlayerOptions);
