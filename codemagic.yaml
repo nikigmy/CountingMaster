@@ -1,6 +1,6 @@
 workflows:
   desktop:
-    name: Unity Desktop Workflow
+    name: Desktop Workflow
     environment:
       groups:
         - unity
@@ -14,6 +14,7 @@ workflows:
       - &gather_dependencies
         name: Gather Dependencies
         script: sh BuildScripts/PrepareCodeMagicBuild.sh
+      - &build_desktop
       - name: Build
         script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Desktop -nographics
     artifacts:
@@ -24,8 +25,8 @@ workflows:
           name: Deactivate License
           script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
   
-  android-ipa:
-    name: Unity Android IPA Workflow
+  android-ipa-no-publishing:
+    name: Android IPA No Publishing Workflow
     environment:
       groups:
         - unity
@@ -34,12 +35,62 @@ workflows:
         - git
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
-        PACKAGE_NAME: <PACKAGE_NAME>
+        PACKAGE_NAME: com.NikigmiStudios.CountMaster
     scripts:
       - *activate_license
       - *gather_dependencies 
-      - name: Build
-        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_Android_Bundle -nographics
+      - &set_build_number_and_build_ipa
+      - name: Set build number and export Unity
+        script: |
+          export NEW_BUILD_NUMBER=$(($(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks=alpha) + 1))
+          $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScript.Build_Android_Bundle -nographics
+    artifacts:
+      - androidBuild/*.aab
+      - "androidBuild"
+    publishing:
+      scripts:
+        - *deactivate_license
+  
+  android-ipa-internal:
+    name: Android IPA Internal Testing Workflow
+    environment:
+      groups:
+        - unity
+        - keystore_credentials
+        - google_play
+        - git
+      vars:
+        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
+        PACKAGE_NAME: com.NikigmiStudios.CountMaster
+    scripts:
+      - *activate_license
+      - *gather_dependencies 
+      - *set_build_number_and_build_ipa
+    artifacts:
+      - androidBuild/*.aab
+      - "androidBuild"
+    publishing:
+      scripts:
+        - *deactivate_license
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+  
+  android-ipa-alpha:
+    name: Android IPA Closed Testing Workflow
+    environment:
+      groups:
+        - unity
+        - keystore_credentials
+        - google_play
+        - git
+      vars:
+        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
+        PACKAGE_NAME: com.NikigmiStudios.CountMaster
+    scripts:
+      - *activate_license
+      - *gather_dependencies 
+      - *set_build_number_and_build_ipa
     artifacts:
       - androidBuild/*.aab
       - "androidBuild"
@@ -49,9 +100,62 @@ workflows:
       google_play:
         credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
         track: alpha
+        submit_as_draft: true
+        
+  android-ipa-beta:
+    name: Android IPA Open Testing Workflow
+    environment:
+      groups:
+        - unity
+        - keystore_credentials
+        - google_play
+        - git
+      vars:
+        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
+        PACKAGE_NAME: com.NikigmiStudios.CountMaster
+    scripts:
+      - *activate_license
+      - *gather_dependencies 
+      - *set_build_number_and_build_ipa
+    artifacts:
+      - androidBuild/*.aab
+      - "androidBuild"
+    publishing:
+      scripts:
+        - *deactivate_license
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: beta
+        submit_as_draft: true
+        
+  android-ipa-production:
+    name: Android IPA Production Workflow
+    environment:
+      groups:
+        - unity
+        - keystore_credentials
+        - google_play
+        - git
+      vars:
+        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
+        PACKAGE_NAME: com.NikigmiStudios.CountMaster
+    scripts:
+      - *activate_license
+      - *gather_dependencies 
+      - *set_build_number_and_build_ipa
+    artifacts:
+      - androidBuild/*.aab
+      - "androidBuild"
+    publishing:
+      scripts:
+        - *deactivate_license
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: production
+        submit_as_draft: true
         
   android-apk:
-    name: Unity Android APK Workflow
+    name: Android APK Workflow
     environment:
       groups:
         - unity
@@ -59,7 +163,7 @@ workflows:
         - git
       vars:
         UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
-        PACKAGE_NAME: <PACKAGE_NAME>
+        PACKAGE_NAME: com.NikigmiStudios.CountMaster
     scripts:
       - *activate_license
       - *gather_dependencies  
@@ -73,7 +177,7 @@ workflows:
         - *deactivate_license
   
   mac:
-    name: Unity Mac Workflow
+    name: Mac Workflow
     environment:
       groups:
         - unity
@@ -92,7 +196,7 @@ workflows:
         - *deactivate_license
           
   ios:
-    name: Unity IOS Workflow
+    name: IOS Workflow
     environment:
       groups:
         - unity
