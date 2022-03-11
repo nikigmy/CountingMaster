@@ -74,6 +74,7 @@ workflows:
       google_play:
         credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
         track: internal
+        submit_as_draft: true
   
   android-ipa-internal:
     name: Android IPA Internal Testing Workflow
@@ -99,6 +100,7 @@ workflows:
       google_play:
         credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
         track: internal
+        submit_as_draft: true
   
   android-ipa-alpha:
     name: Android IPA Closed Testing Workflow
