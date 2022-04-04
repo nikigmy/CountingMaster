@@ -24,8 +24,6 @@ public partial class GameManager : Singleton<GameManager>
 
     void Awake()
     {
-        TMPro.FastAction a;
-        LibraryTest.TestClass.TestMethod();
         _analyticsManager = new AnalyticsManager();
         _gameSave = new GameSave();
         SetState(GameState.MENU);
