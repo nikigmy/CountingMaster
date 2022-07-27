@@ -25,6 +25,26 @@ workflows:
           name: Deactivate License
           script: $UNITY_BIN -batchmode -quit -returnlicense -nographics
   
+  WebGL:
+    name: WebGL Workflow
+    environment:
+      groups:
+        - unity
+        - git
+      vars:
+        UNITY_BIN: $UNITY_HOME/Contents/MacOS/Unity
+    scripts:
+      - *activate_license
+      - *gather_dependencies
+      - &build_webgl
+        name: Build
+        script: $UNITY_BIN -batchmode -quit -logFile -projectPath . -executeMethod BuildScripts.Build_WebGL -nographics
+    artifacts:
+      - "webBuild"
+    publishing:
+      scripts:
+        - *deactivate_license
+  
   android-ipa-no-publishing:
     name: Android IPA No Publishing Workflow
     environment:

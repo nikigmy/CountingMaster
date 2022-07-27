@@ -6,6 +6,21 @@ using UnityEngine;
 
 public class BuildScripts 
 {
+	
+    [MenuItem("Build/Build WebGL")]
+    public static void Build_WebGL()
+    {
+        BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
+        buildPlayerOptions.locationPathName = "webBuild";
+        buildPlayerOptions.target = BuildTarget.WebGL;
+        buildPlayerOptions.options = BuildOptions.None;
+        buildPlayerOptions.scenes = GetScenes();
+
+        Debug.Log("Building WebGL");
+        Build(buildPlayerOptions);
+        Debug.Log("Built WebGL");
+    }
+    
     [MenuItem("Build/Build Mac")]
     public static void Build_Mac()
     {

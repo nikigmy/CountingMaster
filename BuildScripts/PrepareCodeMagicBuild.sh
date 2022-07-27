@@ -1,1 +1,1 @@
-sh BuildScripts/Dependencies/GatherDependencies.sh $GIHUB_TOKEN
+sh BuildScripts/Dependencies/GatherDependencies.sh $GITHUB_TOKEN
