@@ -9,7 +9,7 @@
       public int callbackOrder => 1;
       public void OnPreprocessBuild(BuildReport report)
       {
-          System.Environment.SetEnvironmentVariable("EMSDK_PYTHON", "Users/builder/.pyenv/versions/3.8.7/bin/python");
+          System.Environment.SetEnvironmentVariable("EMSDK_PYTHON", "/builder/.pyenv/versions/3.8.7/bin/python");
       }
   }
   #endif
