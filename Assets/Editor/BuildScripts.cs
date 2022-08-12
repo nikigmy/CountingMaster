@@ -13,21 +13,21 @@ public class BuildScripts
     {
         if (Application.platform == RuntimePlatform.OSXEditor)
         {
-            var locations = GetPythonPath();
-            var zipPath = locations.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .FirstOrDefault(x => x.Contains("zip")).Trim();
-            var pythonPath = Path.GetDirectoryName(zipPath);
-            if (zipPath.Contains("lib"))
-            {
-                pythonPath = pythonPath.Substring(1, pythonPath.Length - 5);
-            }
-            else
-            {
-                pythonPath.Substring(1, pythonPath.Length - 1);
-            }
+            // var locations = GetPythonPath();
+            // var zipPath = locations.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            //     .FirstOrDefault(x => x.Contains("zip")).Trim();
+            // var pythonPath = Path.GetDirectoryName(zipPath);
+            // if (zipPath.Contains("lib"))
+            // {
+            //     pythonPath = pythonPath.Substring(1, pythonPath.Length - 5);
+            // }
+            // else
+            // {
+            //     pythonPath.Substring(1, pythonPath.Length - 1);
+            // }
             
             var version = ExecuteShellCommand("python -V").Trim();
-
+            var pythonPath = "/Users/builder/.pyenv/shims/python";
             Environment.SetEnvironmentVariable("EMSDK_PYTHON", pythonPath);
             Debug.Log($"Setup environment variable with python {version} at {pythonPath}");
         }
@@ -71,7 +71,6 @@ public class BuildScripts
 
     private static string GetPythonPath()
     {
-        return "/Users/builder/.pyenv/shims/python";
         var pythonScript = "import sys; print(sys.path)";
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
