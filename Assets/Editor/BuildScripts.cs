@@ -13,16 +13,17 @@ public class BuildScripts
     {
         //\"import sys; print( '\n'.join(sys.path))\"
         var version = ExecuteShellCommand("python -V").Trim();
-        var location = ExecuteShellCommand("python -c \"import sys; print(sys.path) \"").Trim();
+        var pythonScript = "import sys; print(sys.path)";
+        var location = ExecuteShellCommand("python -c \"" + pythonScript + "\"").Trim();
         
-        Environment.SetEnvironmentVariable("EMSDK_PYTHON", location);
+        Environment.SetEnvironmentVariable("EMSDK_PYTHON", "");
         Debug.Log($"Setup environment variable with python {version} at {location}");
     }
 
     private static string ExecuteShellCommand(string command)
     {
         string output = "";
-        Debug.Log("Executing command");
+        Debug.Log("Executing command " + command);
         var executable = Application.platform == RuntimePlatform.WindowsEditor ? "sh.exe" : "/bin/bash";
         var arguments = Application.platform == RuntimePlatform.WindowsEditor
             ? command
