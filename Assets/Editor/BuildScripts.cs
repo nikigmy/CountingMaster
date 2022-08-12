@@ -12,9 +12,10 @@ public class BuildScripts
     private static void SetupWebBuild()
     {
         //\"import sys; print( '\n'.join(sys.path))\"
+        var location = GetPythonPath();
         var version = ExecuteShellCommand("python -V").Trim();
-        var pythonScript = "import sys; print(sys.path)";
-        var location = ExecuteShellCommand("python -c \"" + pythonScript + "\"").Trim();
+        // var pythonScript = "import sys; print(sys.path)";
+        // var location = ExecuteShellCommand("python -c \"" + pythonScript + "\"").Trim();
         
         Environment.SetEnvironmentVariable("EMSDK_PYTHON", "");
         Debug.Log($"Setup environment variable with python {version} at {location}");
@@ -27,11 +28,11 @@ public class BuildScripts
         var executable = Application.platform == RuntimePlatform.WindowsEditor ? "sh.exe" : "/bin/bash";
         var arguments = Application.platform == RuntimePlatform.WindowsEditor
             ? command
-            : " -c \"" + command + " \"";
+            : " -c \"" + command + "\"";
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
             FileName = executable,
-            UseShellExecute = false,
+            UseShellExecute = true,
             RedirectStandardError = true,
             RedirectStandardInput = true,
             RedirectStandardOutput = true,
@@ -54,6 +55,63 @@ public class BuildScripts
         return output;
     }
 
+    private static string ExecuteShellCommandWindows(string command)
+    {
+        string output = "";
+        ProcessStartInfo startInfo = new ProcessStartInfo()
+        {
+            FileName = "sh.exe",
+            UseShellExecute = false,
+            RedirectStandardError = true,
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            CreateNoWindow = true,
+            Arguments = command
+        };
+
+        Process process = new Process
+        {
+            StartInfo = startInfo
+        };
+
+        process.Start();
+        
+        output = process.StandardOutput.ReadToEnd();
+
+        process.WaitForExit();
+        
+        Debug.Log("command output: " + output);
+        return output;
+    }
+    
+    private static string GetPythonPath()
+    {
+        var pythonScript = "import sys; print(sys.path)";
+        ProcessStartInfo startInfo = new ProcessStartInfo()
+        {
+            FileName = "python",
+            UseShellExecute = false,
+            RedirectStandardError = true,
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            CreateNoWindow = true,
+            Arguments = " -c \"" + pythonScript + "\""
+        };
+
+        Process process = new Process
+        {
+            StartInfo = startInfo
+        };
+
+        process.Start();
+        
+        var output = process.StandardOutput.ReadToEnd();
+
+        process.WaitForExit();
+        
+        Debug.Log("python location " + output);
+        return output;
+    }
     [MenuItem("Build/Build WebGL")]
     public static void Build_WebGL()
     {
