@@ -11,20 +11,32 @@ public class BuildScripts
 	
     private static void SetupWebBuild()
     {
-        //\"import sys; print( '\n'.join(sys.path))\"
-        var location = GetPythonPath();
-        var version = ExecuteShellCommand("python -V").Trim();
-        // var pythonScript = "import sys; print(sys.path)";
-        // var location = ExecuteShellCommand("python -c \"" + pythonScript + "\"").Trim();
-        
-        Environment.SetEnvironmentVariable("EMSDK_PYTHON", "");
-        Debug.Log($"Setup environment variable with python {version} at {location}");
+        if (Application.platform == RuntimePlatform.OSXEditor)
+        {
+            var locations = GetPythonPath();
+            var zipPath = locations.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .FirstOrDefault(x => x.Contains("zip"));
+            var pythonPath = Path.GetDirectoryName(zipPath);
+            if (zipPath.EndsWith("lib"))
+            {
+                pythonPath = Path.GetDirectoryName(pythonPath);
+            }
+
+            pythonPath = Path.GetFullPath(pythonPath);
+            var version = ExecuteShellCommand("python -V").Trim();
+
+            Environment.SetEnvironmentVariable("EMSDK_PYTHON", pythonPath);
+            Debug.Log($"Setup environment variable with python {version} at {pythonPath}");
+        }
+        else
+        {
+            Environment.SetEnvironmentVariable("EMSDK_PYTHON", "");
+        }
     }
 
     private static string ExecuteShellCommand(string command)
     {
         string output = "";
-        Debug.Log("Executing command " + command);
         var executable = Application.platform == RuntimePlatform.WindowsEditor ? "sh.exe" : "/bin/bash";
         var arguments = Application.platform == RuntimePlatform.WindowsEditor
             ? command
@@ -32,7 +44,7 @@ public class BuildScripts
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
             FileName = executable,
-            UseShellExecute = true,
+            UseShellExecute = false,
             RedirectStandardError = true,
             RedirectStandardInput = true,
             RedirectStandardOutput = true,
@@ -51,39 +63,9 @@ public class BuildScripts
 
         process.WaitForExit();
         
-        Debug.Log("command output: " + output);
         return output;
     }
 
-    private static string ExecuteShellCommandWindows(string command)
-    {
-        string output = "";
-        ProcessStartInfo startInfo = new ProcessStartInfo()
-        {
-            FileName = "sh.exe",
-            UseShellExecute = false,
-            RedirectStandardError = true,
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            CreateNoWindow = true,
-            Arguments = command
-        };
-
-        Process process = new Process
-        {
-            StartInfo = startInfo
-        };
-
-        process.Start();
-        
-        output = process.StandardOutput.ReadToEnd();
-
-        process.WaitForExit();
-        
-        Debug.Log("command output: " + output);
-        return output;
-    }
-    
     private static string GetPythonPath()
     {
         var pythonScript = "import sys; print(sys.path)";
@@ -109,7 +91,6 @@ public class BuildScripts
 
         process.WaitForExit();
         
-        Debug.Log("python location " + output);
         return output;
     }
     [MenuItem("Build/Build WebGL")]
@@ -117,7 +98,6 @@ public class BuildScripts
     {
         SetupWebBuild();
         Debug.LogError( "Variable :" + Environment.GetEnvironmentVariable("EMSDK_PYTHON"));
-        return;
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.locationPathName = "webBuild";
         buildPlayerOptions.target = BuildTarget.WebGL;
