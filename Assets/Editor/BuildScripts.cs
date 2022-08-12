@@ -11,8 +11,9 @@ public class BuildScripts
 	
     private static void SetupWebBuild()
     {
+        //\"import sys; print( '\n'.join(sys.path))\"
         var version = ExecuteShellCommand("python -V").Trim();
-        var location = ExecuteShellCommand("where python").Trim();
+        var location = ExecuteShellCommand("python -c \"import sys; print(sys.path) \"").Trim();
         
         Environment.SetEnvironmentVariable("EMSDK_PYTHON", location);
         Debug.Log($"Setup environment variable with python {version} at {location}");
