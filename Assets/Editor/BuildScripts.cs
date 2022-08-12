@@ -21,7 +21,7 @@ public class BuildScripts
     private static string ExecuteShellCommand (string command)
     {
         Debug.Log("Executing command");
-        var executable = Application.platform == RuntimePlatform.WindowsEditor ? "sh.exe" : "/bin/bash";
+        var executable = Application.platform == RuntimePlatform.WindowsEditor ? "sh.exe" : "/bin/zsh";
         ProcessStartInfo startInfo = new ProcessStartInfo(executable, command);
         startInfo.WorkingDirectory = "/";
         startInfo.UseShellExecute = false;
@@ -42,6 +42,8 @@ public class BuildScripts
     public static void Build_WebGL()
     {
         SetupWebBuild();
+        Debug.LogError( "Variable :" + Environment.GetEnvironmentVariable("EMSDK_PYTHON"));
+        return;
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.locationPathName = "webBuild";
         buildPlayerOptions.target = BuildTarget.WebGL;
