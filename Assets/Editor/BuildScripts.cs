@@ -11,8 +11,8 @@ public class BuildScripts
 	
     private static void SetupWebBuild()
     {
-        var version = ExecuteShellCommand("python -V");
-        var location = ExecuteShellCommand("where python");
+        var version = ExecuteShellCommand("python -V").Trim();
+        var location = ExecuteShellCommand("where python").Trim();
         
         Environment.SetEnvironmentVariable("EMSDK_PYTHON", location);
         Debug.Log($"Setup environment variable with python {version} at {location}");
@@ -20,6 +20,7 @@ public class BuildScripts
     
     private static string ExecuteShellCommand (string command)
     {
+        Debug.Log("Executing command");
         var executable = Application.platform == RuntimePlatform.WindowsEditor ? "sh.exe" : "/bin/bash";
         ProcessStartInfo startInfo = new ProcessStartInfo(executable, command);
         startInfo.WorkingDirectory = "/";
@@ -34,9 +35,9 @@ public class BuildScripts
 
         string line = process.StandardOutput.ReadToEnd();
        
+        Debug.Log("command output: " + line);
         return line;
     }
-    
     [MenuItem("Build/Build WebGL")]
     public static void Build_WebGL()
     {
