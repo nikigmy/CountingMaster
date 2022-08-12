@@ -19,10 +19,9 @@ public class BuildScripts
             var pythonPath = Path.GetDirectoryName(zipPath);
             if (zipPath.EndsWith("lib"))
             {
-                pythonPath = Path.GetDirectoryName(pythonPath);
+                pythonPath = pythonPath.Substring(0, pythonPath.Length - 4);
             }
-
-            pythonPath = Path.GetFullPath(pythonPath);
+            
             var version = ExecuteShellCommand("python -V").Trim();
 
             Environment.SetEnvironmentVariable("EMSDK_PYTHON", pythonPath);
