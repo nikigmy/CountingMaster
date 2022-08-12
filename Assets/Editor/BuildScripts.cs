@@ -7,9 +7,38 @@ using UnityEngine;
 public class BuildScripts 
 {
 	
+    private static void SetupWebBuild()
+    {
+        var version = ExecuteShellCommand("python -V");
+        var location = ExecuteShellCommand("where python");
+        
+        Environment.SetEnvironmentVariable("EMSDK_PYTHON", location);
+        Debug.Log($"Setup environment variable with python {version} at {location}");
+    }
+    
+    private static string ExecuteShellCommand (string command)
+    {
+        var executable = Application.platform == RuntimePlatform.WindowsEditor ? "sh.exe" : "/bin/bash";
+        ProcessStartInfo startInfo = new ProcessStartInfo(executable, command);
+        startInfo.WorkingDirectory = "/";
+        startInfo.UseShellExecute = false;
+        startInfo.RedirectStandardInput = true;
+        startInfo.RedirectStandardOutput = true;
+        startInfo.CreateNoWindow = true;
+ 
+        Process process = new Process();
+        process.StartInfo = startInfo;
+        process.Start();
+
+        string line = process.StandardOutput.ReadToEnd();
+       
+        return line;
+    }
+    
     [MenuItem("Build/Build WebGL")]
     public static void Build_WebGL()
     {
+        SetupWebBuild();
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.locationPathName = "webBuild";
         buildPlayerOptions.target = BuildTarget.WebGL;
