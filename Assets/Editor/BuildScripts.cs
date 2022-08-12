@@ -71,6 +71,7 @@ public class BuildScripts
 
     private static string GetPythonPath()
     {
+        return "/Users/builder/.pyenv/shims/python";
         var pythonScript = "import sys; print(sys.path)";
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
