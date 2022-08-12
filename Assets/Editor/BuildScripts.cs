@@ -17,9 +17,13 @@ public class BuildScripts
             var zipPath = locations.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .FirstOrDefault(x => x.Contains("zip"));
             var pythonPath = Path.GetDirectoryName(zipPath);
-            if (zipPath.EndsWith("lib"))
+            if (zipPath.Contains("lib"))
             {
-                pythonPath = pythonPath.Substring(0, pythonPath.Length - 4);
+                pythonPath = pythonPath.Substring(1, pythonPath.Length - 5);
+            }
+            else
+            {
+                pythonPath.Substring(1, pythonPath.Length - 1);
             }
             
             var version = ExecuteShellCommand("python -V").Trim();
