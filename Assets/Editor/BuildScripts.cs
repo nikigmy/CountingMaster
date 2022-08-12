@@ -15,7 +15,7 @@ public class BuildScripts
         {
             var locations = GetPythonPath();
             var zipPath = locations.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .FirstOrDefault(x => x.Contains("zip"));
+                .FirstOrDefault(x => x.Contains("zip")).Trim();
             var pythonPath = Path.GetDirectoryName(zipPath);
             if (zipPath.Contains("lib"))
             {
