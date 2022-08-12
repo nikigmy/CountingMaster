@@ -17,27 +17,41 @@ public class BuildScripts
         Environment.SetEnvironmentVariable("EMSDK_PYTHON", location);
         Debug.Log($"Setup environment variable with python {version} at {location}");
     }
-    
-    private static string ExecuteShellCommand (string command)
+
+    private static string ExecuteShellCommand(string command)
     {
+        string output = "";
         Debug.Log("Executing command");
-        var executable = Application.platform == RuntimePlatform.WindowsEditor ? "sh.exe" : "/bin/zsh";
-        ProcessStartInfo startInfo = new ProcessStartInfo(executable, command);
-        startInfo.WorkingDirectory = "/";
-        startInfo.UseShellExecute = false;
-        startInfo.RedirectStandardInput = true;
-        startInfo.RedirectStandardOutput = true;
-        startInfo.CreateNoWindow = true;
- 
-        Process process = new Process();
-        process.StartInfo = startInfo;
+        var executable = Application.platform == RuntimePlatform.WindowsEditor ? "sh.exe" : "/bin/bash";
+        var arguments = Application.platform == RuntimePlatform.WindowsEditor
+            ? command
+            : " -c \"" + command + " \"";
+        ProcessStartInfo startInfo = new ProcessStartInfo()
+        {
+            FileName = executable,
+            UseShellExecute = false,
+            RedirectStandardError = true,
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            CreateNoWindow = true,
+            Arguments = arguments
+        };
+
+        Process process = new Process
+        {
+            StartInfo = startInfo
+        };
+
         process.Start();
 
-        string line = process.StandardOutput.ReadToEnd();
-       
-        Debug.Log("command output: " + line);
-        return line;
+        output = process.StandardOutput.ReadToEnd();
+
+        process.WaitForExit();
+        
+        Debug.Log("command output: " + output);
+        return output;
     }
+
     [MenuItem("Build/Build WebGL")]
     public static void Build_WebGL()
     {
